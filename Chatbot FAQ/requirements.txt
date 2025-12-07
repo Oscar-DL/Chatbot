@@ -1,6 +1,0 @@
-numpy==1.26.4
-nltk==3.8.1
-rapidfuzz==3.6.1
-tensorflow==2.10.0
-keras==2.10.0
-pickle5==0.0.11
