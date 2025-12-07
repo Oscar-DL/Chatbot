@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chatbot FAQ</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Chatbot FAQ</h1>
+      <p class="lead">Escribe tu pregunta y el bot buscará la mejor respuesta en las FAQs.</p>
+
+      <div class="chatbox">
+        <div id="history"></div>
+        <form id="askForm">
+          <input id="questionInput" type="text" placeholder="Escribe tu pregunta aquí..." autocomplete="off" />
+          <button type="submit">Preguntar</button>
+        </form>
+      </div>
+      <footer>Hecho con Flask · Ejemplo simple</footer>
+    </div>
+
+    <script>
+      const form = document.getElementById('askForm');
+      const input = document.getElementById('questionInput');
+      const history = document.getElementById('history');
+
+      function addMessage(who, text) {
+        const el = document.createElement('div');
+        el.className = 'message ' + who;
+        el.textContent = text;
+        history.appendChild(el);
+        history.scrollTop = history.scrollHeight;
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const q = input.value.trim();
+        if (!q) return;
+        addMessage('user', q);
+        input.value = '';
+        try {
+          const res = await fetch('/api/ask', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({question: q})
+          });
+          if (!res.ok) {
+            const err = await res.json();
+            addMessage('bot', 'Error: ' + (err.error || res.statusText));
+            return;
+          }
+          const data = await res.json();
+          addMessage('bot', data.answer + (data.matched_question ? `\n(matched: "${data.matched_question}", score: ${data.score.toFixed(2)})` : ''));
+        } catch (err) {
+          addMessage('bot', 'Error en la conexión.');
+        }
+      });
+    </script>
+  </body>
+</html>
