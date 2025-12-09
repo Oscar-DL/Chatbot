@@ -7,6 +7,9 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from keras.models import load_model
 from rapidfuzz import process
+import os
+port = int(os.environ.get("PORT", 5000))
+app.run(host='0.0.0.0', port=port)
 
 lemmatizer = WordNetLemmatizer()
 
@@ -89,3 +92,4 @@ def api_chat():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
