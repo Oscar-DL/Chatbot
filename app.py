@@ -7,9 +7,6 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from keras.models import load_model
 from rapidfuzz import process
-import os
-port = int(os.environ.get("PORT", 5000))
-app.run(host='0.0.0.0', port=port)
 
 lemmatizer = WordNetLemmatizer()
 
@@ -61,12 +58,9 @@ def predict_class(sentence):
 #Obtenemos una respuesta aleatoria
 def get_response(tag, intents_json):
     list_of_intents = intents_json['intents']
-    result = ""
     for i in list_of_intents:
         if i["tag"]==tag:
-            result = random.choice(i['responses'])
-            break
-    return result
+            return random.choice(i['responses'])
 
 @app.route('/', methods=['GET', 'POST'])
 def chat():
@@ -91,5 +85,9 @@ def api_chat():
     return jsonify({'error': 'No message provided'}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
+
 
